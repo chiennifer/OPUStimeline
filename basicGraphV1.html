@@ -12,9 +12,11 @@ helpful tutorial: http://alignedleft.com/tutorials/d3/making-a-bar-chart
 
 
 		<style>
+
+
 		</style>
 
-		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<script src="https://d3js.org/d3.v3.min.js"></script>
 
 
 	</head>
@@ -28,130 +30,13 @@ helpful tutorial: http://alignedleft.com/tutorials/d3/making-a-bar-chart
 			Here is where the graph goes. If you are seeing this then the graph is not working correctly.
 		</div>
 
-		<script>
+		<div id= "Graph2"></div>
 
-		// //FOR PRACTICE, MAKE A BAR CHART WITH THIS DATA
-		// //width + height
-		// var w = 500;
-		// var h = 100;
-		// var barPadding = 1;
-		// var textYPadding = 5;
-		// var dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
-  //               11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
+		<div id="Graph3"></div>
 
-		// //create SVG element
-		// var svg = d3.select("body")
-		// 			.append("svg")
-		// 			.attr("width", w)
-		// 			.attr("height", h);
+		<div id="chart"></div>
 
-		// //generate rects and add them to the svg
-		// svg.selectAll("rect")
-		// 	.data(dataset)
-		// 	.enter()
-		// 	.append("rect")
-		// 	.attr("x", function(d, i){
-		// 		return i * (w/dataset.length); //where the bars are placed
-		// 	})
-		//    .attr("y", function(d){
-		//    		return h - d; //height minus data value
-		//    })
-		//    .attr("width", w/dataset.length - barPadding) //sets the width of the bar to be scaled to fit the total width of the svg
-		//    .attr("height", h);
-
-		// svg.selectAll("text")
-		// 	.data(dataset)
-		// 	.enter()
-		// 	.append("text")
-		// 	.text(function(d){
-		// 		return d;
-		// 	})
-		// 	.attr("x", function(d, i){
-		// 		return i * (w / dataset.length) + (w / dataset.length - barPadding) / 2;
-		// 	})
-		// 	.attr("y", function(d){
-		// 		return h-d-textYPadding;
-		// 	})
-		// 	.attr("text-anchor", "middle")
-		// 	;
-
-
-		var dataset = []; //will hold all the data from the csv file
-		//console.log(dataset);
-
-		//NOTE: what I had originally done was create two empty arrays to hold the citations(cit) and the year published(y), just to work on preliminarily displaying the data, but I had some trouble so I just hard wired the numbers in to show the graph
-		//the svg displays the number of citations in the order they are in the CSV file
-		//tbd: is the data coming in pre-sorted?
-
-		var cit = [3209, 971, 500, 433, 403, 324, 256, 214, 186, 185, 172, 92, 70, 62, 61, 59, 111, 32, 27, 27]; // citations
-		//console.log(x);
-		var y = [2008, 2007, 2009, 2013, 2014, 2009, 2009, 2007, 2008, 2011, 2012, 2007, 2009, 2014, 2006, 2013, 2014, 2008, 2012, 2006]; //publication years
-
-		//read the data from the csv file
-		var data = d3.csv("/CHMockDataCSV.csv", function (d){
-			for (i=0; i<d.length; i++){
-				//console.log(d[i]);
-				dataset.push(d[i]);
-				//cit.push(Number(d[i]["Citations"]));
-				//y.push(Number(d[i]["Publication Year"]));
-				////console.log(d[i]["Publication Year"]);
-			}
-		});
-
-		//width + height of svg
-		var w = 700;
-		var h = 500;
-		var barPadding = 3;
-		var yScaleFactor = 10;//so that the bars fit within the svg
-
-		//create SVG element
-		var svg = d3.select("body")
-					.append("svg") //adds the svg to the body
-					.attr("width", w)
-					.attr("height", h);
-
-		// //generate rects and add them to the svg
-		svg.selectAll("rect")
-			.data(cit)
-			.enter()
-			.append("rect")
-			.attr("x", function(d, i){
-				return i * (w/cit.length); //where the bars are placed
-			})
-		   .attr("y", function(d){
-		   		return (h-(d / yScaleFactor)); //height minus data value
-		   })
-		   .attr("width", (w/cit.length) - barPadding ) //sets the width of the bar to be scaled to fit the total width of the svg
-		   .attr("height", h);
-
-		//create the tags so we know the height of these values
-		svg.selectAll("text")
-			.data(cit)
-			.enter()
-			.append("text")
-			.text(function(d){
-				return d;
-			})
-			.attr("x", function(d, i){
-				return i * (w / cit.length) + (w / cit.length - barPadding) / 2;
-			})
-			.attr("y", function(d){
-				return h-(d/yScaleFactor);
-			})
-			.attr("text-anchor", "middle");
-
-			//create SVG element
-		var svg = d3.select("body")
-					.append("svg") //adds the svg to the body
-					.attr("width", w)
-					.attr("height", h);
-
-
-
-
-		
-
-
+		<script type = "text/javascript" src = "jsScript.js">
 		</script>
 
 
