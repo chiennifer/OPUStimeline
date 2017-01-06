@@ -5,6 +5,8 @@
 
 		var cit = [];
 		var years = [];
+		var authors = [];
+
 
 		d3.csv("/CHMockDataCSV.csv", function(data){
 
@@ -19,25 +21,46 @@
 				d.Citations = +d.Citations;
 			});
 
-			//console.log(data[0]); //for testing purposes
+			//var tempAuthors = [];
+			//FOR NEXT TIME == LEAVE THE AUTHORS SPLIT SO THAT YOU CAN MAYBE USE A 
+			//HASHTABLE WITH THE VALUE AS THE CITATIONS FOR A SPECIFIC AUTHOR
+			//SO THEN IF YOU SELECT A CERTAIN AUTHOR THEN IT WILL SAY 
+			//THE DATA = __ AND REDRAW THE GRAPH
+			
+			var currentArticle;
+
 			for (var i = 0; i<data.length; i++){
 				dataset.push(data[i]);
+
+				currentArtID = data[i].ID;
+
+				var currAuthors = (data[i].Authors).split(",");
+				currAuthors.forEach(function(author){
+					//console.log("current author: ", author);
+					if (!authors[author]){
+						authors[author] = [];
+						authors[author].push(currentArtID);
+					}
+					else{
+						authors[author].push(currentArtID);
+					}
+				});
 			}
 
-			//for testing purposes to check if the data is sorted by year
-			// data.forEach(function(d){
-			// 	console.log(d.Publication_Year, d.Citations);
-			// });
+			console.log("authors: ", authors); //UNSORTED
+
+			//var updatedData =
+			//authorCheckBoxes(data, authors, citMax);
+			//console.log("updated checkbox data", updatedData);
 
 			//fill the citations variable
+			// dataset.forEach(function (d) {
+			// 	cit.push(d.Citations); //add the citations 
+			// });
+
 			dataset.forEach(function (d) {
 				cit.push(d.Citations); //add the citations 
 			});
-
-			//fill the years variable //ACTUALLY NOT NEEDED IF THE DATA IS SORTED
-			// dataset.forEach(function(d)){
-			// 	years.push(d.Publication_Year);
-			// }
 
 			//used for double checking values
 			// console.log("citations min:", Math.min.apply(null, cit));
@@ -45,16 +68,94 @@
 			// console.log("year max:", data[0]["Publication_Year"]);
 			// console.log("year min:", data[data.length-1]["Publication_Year"]);
 
-			var citMin = d3.min(cit);
+			//var citMin = d3.min(cit);
 			var citMax = d3.max(cit);
-			var yearMin = data[0]["Publication_Year"];
-			var yearMax = data[data.length-1]["Publication_Year"];
+			// var yearMin = data[0]["Publication_Year"];
+			// var yearMax = data[data.length-1]["Publication_Year"];
 
+			function authorBX(){
+				for (var key in authors){
+					createCheckBoxes(key, authors);
+				}
+				authorCheckBoxes(data, authors, citMax);
+			}
+			authorBX();
+
+			// createCheckBoxes(" A-L Barabasi", authors);
+			// createCheckBoxes(" Albert-Laszlo Barabasi", authors);
+
+			
 			//drawGraph1(cit);
+			//checkBoxesCoauthors(data);
 
-			drawGraph2(data, citMax, yearMax, yearMin);
+			//drawGraph2(authorCheckBoxes(data, authors, citMax), citMax);
 
 		});
+
+	//creates hte interactive checkboxed for each author in authors
+	function createCheckBoxes(a, authors){
+		var checkbox = document.createElement('input');
+			checkbox.type = "checkbox";
+			checkbox.className = "myCheckbox";
+			checkbox.value = a;
+			checkbox.id = a;
+
+		var label = document.createElement('label')
+			label.htmlFor = a;
+			label.appendChild(document.createTextNode(a + " (" + authors[a].length + ")  "));
+
+		checkBoxCoauthors.appendChild(checkbox);
+		checkBoxCoauthors.appendChild(label);
+
+	}
+	
+	//returns the data that will show up in the timeline
+	function authorCheckBoxes (data, authors, citMax) {
+		//updating checkboxes
+      	function update(){
+      		console.log("Starting update");
+      		var choices = [];
+      		d3.selectAll(".myCheckbox").each(function(d){
+      			cb = d3.select(this);
+      			if (cb.property("checked")){
+      				choices.push(cb.property("value"));
+      			}
+      		});
+
+      		var newData = [];
+
+      		if (choices.length>0){
+      			choices.forEach(function (author){
+      				//gets the relevant article information from the dataset from the corresponding author
+      				console.log((data.filter(function (article) { return article.ID == authors[author];}))[0] );
+      				newData.push((data.filter(function (article) { return article.ID == authors[author];}))[0] );
+      			});
+      		}
+      		else{
+      			newData = data; //if none are selected, keep the entire dataset
+      		}
+
+      		console.log("ALERT: DATA CHECKBOXES UPDATED", newData);
+
+      		drawGraph2(newData, citMax)
+
+      		return newData;
+
+      	};
+
+		var table = d3.select("div#checkBoxCoauthors")
+					.append("table")
+					.property("border", "1px");
+		var themCheckboxes = d3.selectAll(".myCheckbox").on("change", update);
+		console.log("BLAH");
+		console.log(themCheckboxes);
+		//d3.selectAll(".myCheckbox").on("change", update);
+		//d3.select("#checkBoxCoauthors").select(".myCheckbox").onChange(update);
+
+      	update();
+	}
+
+
 
 		//console.log(dataset);
 
@@ -164,12 +265,14 @@
 		
 		//CURRENTLY WORKING ON CREATING A HORIZONTAL BAR CHART WITH THE DATA
 
-		function drawGraph2(d, xmax, ymax, ymin){
+		function drawGraph2(d, xmax){
 
 			//create an array for each new year that appears or a space if the year is not new
 			var years = [];
 			var i=0;
 			var currentYear;
+
+			console.log("drawing graph 2...", d);
 
 			d.forEach(function (data) {
 				//console.log(data);
@@ -189,8 +292,7 @@
 			//console.log("years array has ", years);
 
 
-			console.log("drawing graph 2...", d);
-
+			
 			var axisMargin = 50,
             	margin = 30, //leftmost margin
             	valueMargin = 3,
@@ -267,10 +369,6 @@
 	            // .attr("width", function(d){
 	            //     return xScale(d.Citations) - (endBarWidth/2);// /dataScale;
 	            // });
-
-
-
-
 
 			xAxis = d3.svg.axis()
 			 			.scale(xScale)
