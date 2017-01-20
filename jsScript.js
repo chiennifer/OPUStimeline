@@ -1,6 +1,5 @@
 
 
-		//TBD IF THIS VARIABLE IS NECESSARY/NOT
 		var dataset = []; //will hold all the data from the csv file
 
 		var cit = [];
@@ -49,15 +48,6 @@
 
 			console.log("authors: ", authors); //UNSORTED
 
-			//var updatedData =
-			//authorCheckBoxes(data, authors, citMax);
-			//console.log("updated checkbox data", updatedData);
-
-			//fill the citations variable
-			// dataset.forEach(function (d) {
-			// 	cit.push(d.Citations); //add the citations 
-			// });
-
 			dataset.forEach(function (d) {
 				cit.push(d.Citations); //add the citations 
 			});
@@ -81,18 +71,9 @@
 			}
 			authorBX();
 
-			// createCheckBoxes(" A-L Barabasi", authors);
-			// createCheckBoxes(" Albert-Laszlo Barabasi", authors);
-
-			
-			//drawGraph1(cit);
-			//checkBoxesCoauthors(data);
-
-			//drawGraph2(authorCheckBoxes(data, authors, citMax), citMax);
-
 		});
 
-	//creates hte interactive checkboxed for each author in authors
+	//creates the interactive checkboxed for each author in authors
 	function createCheckBoxes(a, authors){
 		var checkbox = document.createElement('input');
 			checkbox.type = "checkbox";
@@ -117,7 +98,9 @@
       		var choices = [];
       		d3.selectAll(".myCheckbox").each(function(d){
       			cb = d3.select(this);
+
       			if (cb.property("checked")){
+      				console.log("the checkbox selected is: " + cb.property("value"));
       				choices.push(cb.property("value"));
       			}
       		});
@@ -125,11 +108,23 @@
       		var newData = [];
 
       		if (choices.length>0){
+      			console.log("choices: " + choices);
+      			//gets the relevant article information from the dataset from the corresponding author
       			choices.forEach(function (author){
-      				//gets the relevant article information from the dataset from the corresponding author
-      				console.log((data.filter(function (article) { return article.ID == authors[author];}))[0] );
-      				newData.push((data.filter(function (article) { return article.ID == authors[author];}))[0] );
+      				var articleIDsArray = authors[author];
+      				articleIDsArray.forEach( function (id) {
+      				 	data.forEach( function (d){
+      				 		if (d.ID == id){
+      				 			console.log("adding selected author data..." + d);
+      				 			newData.push(d);
+      				 		}
+      					})
+      				})
       			});
+
+      			//resort the data to make sure it is in order of publication year
+      			newData.sort(function (a, b){return a.Publication_Year-b.Publication_Year}); //sorts by publication year
+				newData.sort(function (a, b){return d3.descending(a.Publication_Year, b.Publication_Year)}); //sorts to be descending
       		}
       		else{
       			newData = data; //if none are selected, keep the entire dataset
@@ -147,119 +142,10 @@
 					.append("table")
 					.property("border", "1px");
 		var themCheckboxes = d3.selectAll(".myCheckbox").on("change", update);
-		console.log("BLAH");
 		console.log(themCheckboxes);
-		//d3.selectAll(".myCheckbox").on("change", update);
-		//d3.select("#checkBoxCoauthors").select(".myCheckbox").onChange(update);
 
       	update();
 	}
-
-
-
-		//console.log(dataset);
-
-		//-----------------------------------------------------------
-
-		// //width + height of svg
-		// var w = 700;
-		// var h = 500;
-		// var barPaddingg1 = 3;
-		// var citScaleFactor = 7;
-		// var yScaleFactor = 5;  //so that the bars fit within the svg
-
-		//-----------------------------------------------------------
-
-		//CITATIONS GRAPH
-		//create SVG element
-		// function drawGraph1 (cit){
-
-		// 	console.log("drawing graph 1...", cit);
-
-		// 	// console.log("width", w);
-		// 	// console.log("height", h);
-		// 	// console.log("citations length", cit.length);
-		// 	// console.log("barPadding", barPadding);
-
-		// 	var svg2 = d3.select("div#Graph1")
-		// 				.append("svg") //adds the svg to the body
-		// 				.attr("width", w)
-		// 				.attr("height", h);
-
-		// 	// //generate rects and add them to the svg
-		// 	svg2.selectAll("rect")
-		// 		.data(cit)
-		// 		.enter()
-		// 		.append("rect")
-		// 		.attr("x", function(d, i){
-		// 			return i * (w/cit.length); //where the bars are placed
-		// 		})
-		// 	   .attr("y", function(d){
-		// 	   		return (h-(d / citScaleFactor)); //height minus data value
-		// 	   })
-		// 	   .attr("width", (w/cit.length) - barPaddingg1) //sets the width of the bar to be scaled to fit the total width of the svg
-		// 	   .attr("height", h)
-
-		// 	   // bar.append("rect")
-  //     //       .attr("transform", "translate("+labelWidth+", 0)")
-
-
-		// 	//create the tags so we know the height of these values
-		// 	svg2.selectAll("text")
-		// 		.data(cit)
-		// 		.enter()
-		// 		.append("text")
-		// 		.text(function(d){
-		// 			return d;
-		// 		})
-		// 		.attr("x", function(d, i){
-		// 			return i * (w / cit.length) + (w / cit.length - barPaddingg1) / 2;
-		// 		})
-		// 		.attr("y", function(d){
-		// 			return h-(d/citScaleFactor);
-		// 		})
-		// 		.attr("text-anchor", "middle");
-
-		// };
-
-		//-----------------------------------------------------------
-
-
-		// //create SVG element
-		// //YEAR GRAPH
-		// var svg2 = d3.select("div#Graph2")
-		// 			.append("svg") //adds the svg to the body
-		// 			.attr("width", w)
-		// 			.attr("height", h);
-
-		// svg2.selectAll("rect")
-		// 	.data(y)
-		// 	.enter()
-		// 	.append("rect")
-		// 	.attr("x", function(d, i){
-		// 		return i * (w/y.length); //where the bars are placed
-		// 	})
-		//    .attr("y", function(d){
-		//    		return (h-(d / yScaleFactor)); //height minus data value
-		//    })
-		//    .attr("width", (w/y.length) - barPadding ) //sets the width of the bar to be scaled to fit the total width of the svg
-		//    .attr("height", h);
-
-		//    //create the tags so we know the height of these values
-		// svg2.selectAll("text")
-		// 	.data(y)
-		// 	.enter()
-		// 	.append("text")
-		// 	.text(function(d){
-		// 		return d;
-		// 	})
-		// 	.attr("x", function(d, i){
-		// 		return i * (w / y.length) + (w / y.length - barPadding) / 2;
-		// 	})
-		// 	.attr("y", function(d){
-		// 		return h-(d/yScaleFactor);
-		// 	})
-		// 	.attr("text-anchor", "middle");
 
 		//-----------------------------------------------------------
 		
@@ -297,9 +183,7 @@
             	margin = 30, //leftmost margin
             	valueMargin = 3,
 
-            	width = 1000, //parseInt(d3.select('body').style('width'), 10),
-            	//height = 1000,
-            	//barHeight = (1000/d.length) - (3*2), //added /10 to make bars skinnier
+            	width = 1000,
             	barHeight = 2,//barThickness
             	barPadding = 30,
 
@@ -311,9 +195,9 @@
 
             	fontMargin = 20, //PARAMETERIZE????
 
-       			//dataScale = 4,
             	data, bar, svg, xScale, yScale, xAxis, labelWidth = 0;
 
+            d3.select("svg").remove();
 
 			svg = d3.select("div#Graph2")
 		 			.append("svg") //adds the svg to the body
@@ -339,9 +223,7 @@
 				.text(function(d, i){
 					return years[i];//d.Publication_Year; //RETURNS THE TITLE AS THE TAG FOR EACH BAR -- NEEDS TO BE TITLE AND JOURNAL
 				});
-				// .each(function(){
-				// 	labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width)); //left margin between year and bar start
-				// });
+
 
 			xScale = d3.scale.linear()
 						.domain([0, xmax + 1000]) //maps the domain of 0-xmax+1000 onto the width of the svg
@@ -366,9 +248,7 @@
 				})
 	            .attr("height", endBarHeight)
 	            .attr("width", endBarWidth);
-	            // .attr("width", function(d){
-	            //     return xScale(d.Citations) - (endBarWidth/2);// /dataScale;
-	            // });
+
 
 			xAxis = d3.svg.axis()
 			 			.scale(xScale)
@@ -376,15 +256,6 @@
 			 			.tickSize(6,0)
 			 			.orient("bottom");
 
-			// yScale = d3.scale.linear()
-			//  			.domain([ymin, ymax])
-			//  			.range([0, height]);
-
-			// yAxis = d3.svg.axis()
-			// 			.scale(yScale)
-			// 			.ticks(20)
-			// 			.tickSize(5,0)
-			//  			.orient("left");
 
     		//puts the titles at the end of each bar
 		    bar.append("text")
@@ -437,25 +308,11 @@
 		    	div.style("display", "none");
 		    });
 
-		    // svg.insert("g")//,":first-child")
-	     //        .attr("class", "axisHorizontal")
-	     //        //.attr("transform", "translate(" + (margin + labelWidth) + ","+ (height - axisMargin - margin*2)+")")
-	     //        .call(xAxis)
 
 	     	svg.append("g")
 	     		.attr("transform", "translate(-50,0)")
 	     		.attr("class", "x axis")
 	     		.call(xAxis);
-
-	     	// svg.append("g")
-	     	// 	.attr("transform", "translate(" + axisMargin+ ",30)")
-	     	// 	.attr("class", "y axis")
-	      //   	.call(yAxis);
-
-
-	    
-
-
 
 
 
